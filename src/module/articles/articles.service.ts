@@ -4,17 +4,20 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
-import { promises } from 'dns';
+
 
 @Injectable()
 export class ArticlesService {
   constructor(@InjectRepository(Article) private articelRepo: Repository<Article>){}
-   async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const article = this.articelRepo.create(createArticleDto)
+
+   async create(createArticleDto: CreateArticleDto,file:Express.Multer.File): Promise<Article> {
+     const article = this.articelRepo.create(createArticleDto)
+     
+     article.backgroundImage = `http://localhost:4001/uploads/${file.filename}`
     return await this.articelRepo.save(article)
   }
 
-  async findAll(): Promise<Article[]> {
+  async findAll(): Promise<Article[]> { 
     return await this.articelRepo.find()
   }
 
