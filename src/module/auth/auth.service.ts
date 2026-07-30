@@ -14,7 +14,7 @@ import * as nodemailer from "nodemailer";
 import * as bcrypt from "bcrypt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { JwtService } from '@nestjs/jwt';
+import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -41,8 +41,7 @@ export class AuthService {
 
     const foundedUser = await this.authRepo.findOne({ where: { email } });
 
-    if (foundedUser)
-      throw new UnauthorizedException("User already exists");
+    if (foundedUser) throw new UnauthorizedException("User already exists");
 
     const randomCode = Array.from({ length: 6 }, () =>
       Math.floor(Math.random() * 10),
@@ -58,7 +57,7 @@ export class AuthService {
       otpTime: Date.now() + 120000,
     });
 
-    await this.authRepo.save(user)
+    await this.authRepo.save(user);
 
     await this.transporter.sendMail({
       from: "yunusbek0812@gamil.com",
@@ -67,7 +66,7 @@ export class AuthService {
       text: `${randomCode}`,
     });
 
-    return "Registered"; 
+    return "Registered";
   }
 
   async login(createLoginDto: CreateLoginDto): Promise<string> {
@@ -81,13 +80,13 @@ export class AuthService {
       Math.floor(Math.random() * 10),
     ).join("");
 
-    const compare = await bcrypt.compare(
-      password,
-      foundedUser.password,
-    );
+    const compare = await bcrypt.compare(password, foundedUser.password);
 
     if (compare) {
-      await this.authRepo.update(foundedUser.id,{ code: randomCode, otpTime: Date.now() + 120000 } );
+      await this.authRepo.update(foundedUser.id, {
+        code: randomCode,
+        otpTime: Date.now() + 120000,
+      });
 
       await this.transporter.sendMail({
         from: "yunusbek0812@gamil.com",
@@ -115,12 +114,12 @@ export class AuthService {
 
     if (foundedUser.code !== code) throw new UnauthorizedException("Wrong otp");
 
-    await this.authRepo.update(foundedUser.id,{ code: "", otpTime: 0 });
+    await this.authRepo.update(foundedUser.id, { code: "", otpTime: 0 });
 
-    const payload = { email: foundedUser.email,role:foundedUser.role };
+    const payload = { id:foundedUser.id,email: foundedUser.email, role: foundedUser.role };
 
-    return{
-      token: await this.jwtService.signAsync(payload)
-    }
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
   }
 }

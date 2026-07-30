@@ -10,6 +10,7 @@ import {
   HttpCode,
   UseInterceptors,
   UploadedFile,
+  Req,
 } from "@nestjs/common";
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
@@ -59,8 +60,9 @@ export class ArticlesController {
 create(
   @Body() createArticleDto: CreateArticleDto,
   @UploadedFile() file: Express.Multer.File,
+  @Req() request: any
 ) {
-  return this.articlesService.create(createArticleDto, file);
+  return this.articlesService.create(createArticleDto, file,request);
 }
 
   @ApiOkResponse({ type: [CreateArticleDto] })

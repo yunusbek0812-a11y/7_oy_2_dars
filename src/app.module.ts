@@ -7,6 +7,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { Article } from './module/articles/entities/article.entity';
 import { ArticlesModule } from './module/articles/articles.module';
+import { Tag } from './module/tag/entities/tag.entity';
+import { TagModule } from './module/tag/tag.module';
 
 @Module({
   imports: [
@@ -17,11 +19,12 @@ import { ArticlesModule } from './module/articles/articles.module';
       username:"postgres",
       database: process.env.DB_NAME,
       password:process.env.DB_PASSWORD,
-      entities: [Auth,Article],
+      entities: [Auth,Article,Tag],
       synchronize: true
     }),
     AuthModule,
-    ArticlesModule
+    ArticlesModule,
+    TagModule
   ],
   controllers: [],
   providers: [],
