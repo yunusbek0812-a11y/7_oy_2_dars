@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
+  Query,
 } from "@nestjs/common";
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
@@ -31,6 +32,7 @@ import { CreateArticlFileeDto } from "./dto/create-article-file.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from 'multer'
 import * as path from 'path'
+import { QueryDto } from "./dto/query.dto";
 
 @ApiBearerAuth("JWT-auth")
 @ApiInternalServerErrorResponse({ description: "Interval server error" })
@@ -65,12 +67,10 @@ create(
   return this.articlesService.create(createArticleDto, file,request);
 }
 
-  @ApiOkResponse({ type: [CreateArticleDto] })
-  @HttpCode(200)
-  @Get("get_all_articles")
-  findAll() {
-    return this.articlesService.findAll();
-  }
+@Get("get_all_articles")
+findAll(@Query() queryDto: QueryDto) {
+  return this.articlesService.findAll(queryDto);
+}
 
   @ApiNotFoundResponse({ description: "Article not found" })
   @HttpCode(200)

@@ -19,7 +19,6 @@ export class Tag extends BaseEntity {
   @JoinColumn({ name: "author_id" })
   author: Auth;
 
-  @ManyToMany(() => Article, (article) => article.tags)
-  @JoinTable({ name: "tag_articles" })
-  articles: Article[];
+@ManyToMany(() => Article, (article) => article.tags)
+articles: Article[];
 }

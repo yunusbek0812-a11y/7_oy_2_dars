@@ -1,27 +1,43 @@
 import { BaseEntity } from "src/database/entites/base.entity";
+import { ArticleImage } from "src/module/article-images/entities/article-image.entity";
 import { Auth } from "src/module/auth/entities/auth.entity";
 import { Tag } from "src/module/tag/entities/tag.entity";
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToMany, OneToMany } from "typeorm";
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 
-@Entity({name:"article"})
+@Entity({ name: "article" })
 export class Article extends BaseEntity {
   @Column()
-  title:string;
+  title: string;
 
   @Column()
-  text: string
+  text: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   backgroundImage!: string;
 
-  @DeleteDateColumn({nullable:true})
-  deletedAt?:Date
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 
-    @ManyToMany(()=> Auth, (user) => user.articles)
-    @JoinColumn({name:"auth_id"})
-    author!: Auth
+  @ManyToOne(() => Auth, (user) => user.articles)
+  @JoinColumn({ name: "author_id" })
+  author: Auth;
 
-    @OneToMany(() => Tag, (tag) => tag.articles)
-    @JoinColumn({name: "tag_id"})
-    tags!:Tag[]
+  @ManyToMany(() => Tag, (tag) => tag.articles)
+  @JoinTable({
+    name: "tag_articles",
+  })
+  tags: Tag[];
+  articleImages: any;
+
+  @OneToMany(() => ArticleImage, (articleImage) => articleImage.article,{nullable:true})
+  articleImage?: ArticleImage[];
 }
